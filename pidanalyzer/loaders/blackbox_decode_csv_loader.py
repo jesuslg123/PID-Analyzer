@@ -23,6 +23,7 @@ class BlackboxDecodeCsvLoader(BlackboxLogViewerCsvLoader):
                   'gyroData[0]', 'gyroData[1]', 'gyroData[2]',
                   'ugyroADC[0]', 'ugyroADC[1]', 'ugyroADC[2]',
                   'debug[0]', 'debug[1]', 'debug[2]', 'debug[3]',
+                  'gyroUnfilt[0]', 'gyroUnfilt[1]', 'gyroUnfilt[2]',
                   ]
 
     TIME_FIELD = "time (us)"

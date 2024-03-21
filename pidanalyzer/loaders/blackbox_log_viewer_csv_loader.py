@@ -23,6 +23,7 @@ class BlackboxLogViewerCsvLoader(Loader):
                   'gyroData[0]', 'gyroData[1]', 'gyroData[2]',
                   'ugyroADC[0]', 'ugyroADC[1]', 'ugyroADC[2]',
                   'debug[0]', 'debug[1]', 'debug[2]', 'debug[3]',
+                  'gyroUnfilt[0]', 'gyroUnfilt[1]', 'gyroUnfilt[2]',
                   ]
 
     TIME_FIELD = "time"
@@ -44,6 +45,7 @@ class BlackboxLogViewerCsvLoader(Loader):
         tmp_csv_name = os.path.basename(path).replace(ext, ".main.csv")
         tmp_csv_path = os.path.join(self.tmp_path, tmp_csv_name)
         headers = headerdict(tmp_csv_path)
+        print(headers)
         main_fields_start_row = None
         with open(path) as f:
             lines = f.readlines()
@@ -70,11 +72,19 @@ class BlackboxLogViewerCsvLoader(Loader):
         result.update({'throttle': data['rcCommand[3]'].values, 'time_us': data[self.TIME_FIELD].values * 1e-6})
         for i in ['0', '1', '2']:
             result.update({'rcCommand' + i: data['rcCommand[' + i + ']'].values})
-            try:
-                result.update({'debug' + i: data['debug[' + i + ']'].values})
-            except KeyError:
-                log.warning('No debug[' + i + '] trace found!')
-                result.update({'debug' + i: np.zeros_like(data['rcCommand[' + i + ']'].values)})
+            
+            if 'gyroUnfilt[0]' in data:
+                try:
+                    result.update({'debug' + i: data['gyroUnfilt[' + i + ']'].values})
+                except KeyError:
+                    log.warning('No gyroUnfilt[' + i + '] trace found!')
+                    result.update({'gyroUnfilt' + i: np.zeros_like(data['rcCommand[' + i + ']'].values)})
+            else:
+                try:
+                    result.update({'debug' + i: data['debug[' + i + ']'].values})
+                except KeyError:
+                    log.warning('No debug[' + i + '] trace found!')
+                    result.update({'debug' + i: np.zeros_like(data['rcCommand[' + i + ']'].values)})
 
             try:
                 result.update({'PID loop in' + i: data['axisP[' + i + ']'].values})

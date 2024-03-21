@@ -10,3 +10,7 @@ config.ini
 *.event
 /blackbox_decode*
 /blackbox_decode.*
+*.bbl
+/tmp
+/logs
+.DS_Store
